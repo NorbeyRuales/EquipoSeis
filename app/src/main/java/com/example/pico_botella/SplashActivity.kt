@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.pico_botella.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
@@ -13,13 +14,20 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.splashanim)
+            .into(binding.ivBottleSplash)
 
         Handler(Looper.getMainLooper()).postDelayed({
+
             startActivity(Intent(this, MainActivity::class.java))
             finish()
+
         }, 5000)
     }
 }

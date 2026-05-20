@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -10,50 +10,50 @@
         android:id="@+id/tvDialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nuevo Reto"
-        android:textColor="@color/orange"
+        android:gravity="center"
+        android:text="Agregar reto"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
+        android:id="@+id/etDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Descripción del reto"
-        android:textColorHint="@color/white">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textCapSentences"
-            android:textColor="@color/white" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:hint="Escriba el reto"
+        android:textColor="@color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:backgroundTint="@color/orange"
+        android:inputType="textCapSentences" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:gravity="end"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnCancel"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="CANCELAR"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/orange"
+            android:text="Cancelar"
             android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btnSave"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:backgroundTint="@color/orange"
-            android:text="GUARDAR"
-            android:textColor="@color/black" />
+            android:backgroundTint="@android:color/darker_gray"
+            android:enabled="false"
+            android:text="Guardar"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </LinearLayout>

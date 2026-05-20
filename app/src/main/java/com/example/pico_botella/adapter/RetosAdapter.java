@@ -1,5 +1,7 @@
 package com.example.pico_botella.adapter;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +40,18 @@ public class RetosAdapter extends RecyclerView.Adapter<RetosAdapter.RetoViewHold
         Reto reto = listaRetos.get(position);
         holder.tvDescripcion.setText(reto.getDescripcion());
         
-        holder.btnEdit.setOnClickListener(v -> listener.onEditClick(reto));
-        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(reto));
+        // Criterio 7: Pequeño delay para dejar ver la animación de touch (ripple)
+        holder.btnEdit.setOnClickListener(v -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (listener != null) listener.onEditClick(reto);
+            }, 200);
+        });
+
+        holder.btnDelete.setOnClickListener(v -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (listener != null) listener.onDeleteClick(reto);
+            }, 200);
+        });
     }
 
     @Override

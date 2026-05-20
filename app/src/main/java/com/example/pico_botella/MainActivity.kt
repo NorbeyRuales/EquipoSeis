@@ -1,5 +1,8 @@
 package com.example.pico_botella
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +13,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pico_botella.databinding.ActivityMainBinding
+import com.example.pico_botella.fragments.InstruccionesFragment
 import com.example.pico_botella.fragments.RetosFragment
 
 class MainActivity : AppCompatActivity() {
@@ -35,8 +39,29 @@ class MainActivity : AppCompatActivity() {
             toggleMusic()
         }
 
+        // --- INSTRUCCIONES DEL JUEGO (HU 5.0) ---
         binding.toolbar.btnInstructions.setOnClickListener {
-            showRulesDialog()
+            val fragment = InstruccionesFragment()
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // --- CALIFICAR APLICACIÓN (HU 4.0) ---
+        binding.toolbar.btnStar.setOnClickListener {
+            rateApp()
+        }
+
+        // --- COMPARTIR APLICACIÓN (HU 10.0) ---
+        binding.toolbar.btnShare.setOnClickListener {
+            shareApp()
         }
 
         // --- CONEXIÓN BOTÓN "+" ---
@@ -61,6 +86,35 @@ class MainActivity : AppCompatActivity() {
                 binding.btnStartGame.clearAnimation() // 🛑 se detiene al presionar
                 startCountdown()
             }
+        }
+    }
+
+    /**
+     * Implementación de la HU 10.0: Compartir aplicación.
+     * Muestra el selector nativo de Android para compartir la app.
+     */
+    private fun shareApp() {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            val shareMessage = "App Pico Botella\n\n" +
+                    "Solo los valientes lo juegan !!\n\n" +
+                    "https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es"
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+        }
+        startActivity(Intent.createChooser(shareIntent, "Compartir usando:"))
+    }
+
+    /**
+     * Implementación de la HU 4.0: Calificar la aplicación.
+     */
+    private fun rateApp() {
+        val packageName = "com.nequi.MobileApp"
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+            startActivity(intent)
         }
     }
 

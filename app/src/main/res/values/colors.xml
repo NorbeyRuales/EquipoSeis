@@ -5,4 +5,7 @@
     <color name="orange">#FF6600</color>
     <color name="toolbar_bg">#BB000000</color>
     <color name="wood_brown">#8B4513</color>
+    <!-- Colores para HU 6.0 -->
+    <color name="dark_gray">#2C2C2C</color>
+    <color name="gray_line">#4A4A4A</color>
 </resources>

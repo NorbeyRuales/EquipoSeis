@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pico_botella.databinding.ActivityMainBinding
+import com.example.pico_botella.fragments.RetosFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +37,21 @@ class MainActivity : AppCompatActivity() {
 
         binding.toolbar.btnInstructions.setOnClickListener {
             showRulesDialog()
+        }
+
+        // --- CONEXIÓN BOTÓN "+" ---
+        binding.toolbar.btnAddChallenge.setOnClickListener {
+            val fragment = RetosFragment()
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         startHeartbeatAnimation()

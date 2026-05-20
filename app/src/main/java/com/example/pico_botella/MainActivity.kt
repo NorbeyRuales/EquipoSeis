@@ -15,10 +15,10 @@ import com.example.pico_botella.fragments.RetosFragment
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mediaPlayer: MediaPlayer
+    lateinit var mediaPlayer: MediaPlayer // Cambiado a public (internal by default in Kotlin) para acceso desde Fragment
     private lateinit var heartbeatAnim: Animation
 
-    private var isPlaying = true
+    var isPlaying = true // Cambiado a public para acceso desde Fragment
     private var isGameRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

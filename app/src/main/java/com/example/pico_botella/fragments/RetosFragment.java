@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.pico_botella.MainActivity;
 import com.example.pico_botella.R;
 import com.example.pico_botella.adapter.RetosAdapter;
 import com.example.pico_botella.database.RetosDatabaseHelper;
@@ -24,6 +26,7 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
     private RetosAdapter adapter;
     private RetosDatabaseHelper dbHelper;
     private FloatingActionButton fabAdd;
+    private Toolbar toolbarRetos;
 
     @Nullable
     @Override
@@ -32,6 +35,7 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
 
         rvRetos = view.findViewById(R.id.rvRetos);
         fabAdd = view.findViewById(R.id.fabAdd);
+        toolbarRetos = view.findViewById(R.id.toolbarRetos);
         dbHelper = new RetosDatabaseHelper(getContext());
 
         setupRecyclerView();
@@ -39,6 +43,31 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
         fabAdd.setOnClickListener(v -> abrirDialogoAgregar());
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Criterio 1: Pausar audio al entrar
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity.getMediaPlayer() != null && activity.getMediaPlayer().isPlaying()) {
+                activity.getMediaPlayer().pause();
+            }
+        }
+
+        // Criterio 3: Toolbar con flecha atrás y restablecer audio
+        toolbarRetos.setNavigationOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                // Si la música estaba activa (isPlaying es true), la reanudamos
+                if (activity.isPlaying()) {
+                    activity.getMediaPlayer().start();
+                }
+            }
+            getParentFragmentManager().popBackStack();
+        });
     }
 
     private void setupRecyclerView() {
@@ -51,6 +80,8 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
     public void actualizarLista() {
         if (adapter != null && dbHelper != null) {
             adapter.setRetos(dbHelper.obtenerRetos());
+            // Criterio 5 y 6: El nuevo reto debe aparecer arriba
+            rvRetos.scrollToPosition(0);
         }
     }
 
@@ -67,6 +98,8 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
 
     @Override
     public void onDeleteClick(Reto reto) {
+        // Aquí podrías lanzar el diálogo de eliminación (HU 9.0)
+        // Por ahora lo eliminamos directamente para mantener el flujo
         dbHelper.eliminarReto(reto.getId());
         actualizarLista();
     }

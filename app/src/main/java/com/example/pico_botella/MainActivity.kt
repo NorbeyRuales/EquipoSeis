@@ -1,5 +1,8 @@
 package com.example.pico_botella
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +42,11 @@ class MainActivity : AppCompatActivity() {
             showRulesDialog()
         }
 
+        // CALIFICAR APLICACIÓN
+        binding.toolbar.btnStar.setOnClickListener {
+            rateApp()
+        }
+
         // --- CONEXIÓN BOTÓN "+" ---
         binding.toolbar.btnAddChallenge.setOnClickListener {
             val fragment = RetosFragment()
@@ -61,6 +69,18 @@ class MainActivity : AppCompatActivity() {
                 binding.btnStartGame.clearAnimation() // 🛑 se detiene al presionar
                 startCountdown()
             }
+        }
+    }
+
+    /*Calificar la aplicación.*/
+    private fun rateApp() {
+        val packageName = "com.nequi.MobileApp"
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+            startActivity(intent)
         }
     }
 

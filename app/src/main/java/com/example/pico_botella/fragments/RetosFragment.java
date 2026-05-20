@@ -16,6 +16,7 @@ import com.example.pico_botella.adapter.RetosAdapter;
 import com.example.pico_botella.database.RetosDatabaseHelper;
 import com.example.pico_botella.dialog.AgregarRetoDialog;
 import com.example.pico_botella.dialog.EditarRetoDialog;
+import com.example.pico_botella.dialog.EliminarRetoDialog;
 import com.example.pico_botella.model.Reto;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
@@ -52,8 +53,8 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
         // Criterio 1: Pausar audio al entrar
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
-            if (activity.getMediaPlayer() != null && activity.getMediaPlayer().isPlaying()) {
-                activity.getMediaPlayer().pause();
+            if (activity.mediaPlayer != null && activity.mediaPlayer.isPlaying()) {
+                activity.mediaPlayer.pause();
             }
         }
 
@@ -61,9 +62,8 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
         toolbarRetos.setNavigationOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 MainActivity activity = (MainActivity) getActivity();
-                // Si la música estaba activa (isPlaying es true), la reanudamos
                 if (activity.isPlaying()) {
-                    activity.getMediaPlayer().start();
+                    activity.mediaPlayer.start();
                 }
             }
             getParentFragmentManager().popBackStack();
@@ -80,7 +80,7 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
     public void actualizarLista() {
         if (adapter != null && dbHelper != null) {
             adapter.setRetos(dbHelper.obtenerRetos());
-            // Criterio 5 y 6: El nuevo reto debe aparecer arriba
+            // Criterio 6: Asegurar que el scroll vaya al inicio para ver el nuevo item
             rvRetos.scrollToPosition(0);
         }
     }
@@ -98,9 +98,8 @@ public class RetosFragment extends Fragment implements RetosAdapter.OnRetoClickL
 
     @Override
     public void onDeleteClick(Reto reto) {
-        // Aquí podrías lanzar el diálogo de eliminación (HU 9.0)
-        // Por ahora lo eliminamos directamente para mantener el flujo
-        dbHelper.eliminarReto(reto.getId());
-        actualizarLista();
+        // Criterio 10: Lanzar cuadro de diálogo de eliminar reto
+        EliminarRetoDialog dialog = new EliminarRetoDialog(reto, this);
+        dialog.show(getParentFragmentManager(), "EliminarRetoDialog");
     }
 }

@@ -53,6 +53,7 @@ public class RetosDatabaseHelper extends SQLiteOpenHelper {
     public List<Reto> obtenerRetos() {
         List<Reto> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+        // Criterio 6: ORDER BY id DESC para que el nuevo reto aparezca arriba
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_RETOS + " ORDER BY " + COLUMN_ID + " DESC", null);
 
         if (cursor.moveToFirst()) {

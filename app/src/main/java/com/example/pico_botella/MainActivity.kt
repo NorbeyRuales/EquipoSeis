@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pico_botella.databinding.ActivityMainBinding
+import com.example.pico_botella.fragments.InstruccionesFragment
 import com.example.pico_botella.fragments.RetosFragment
 
 class MainActivity : AppCompatActivity() {
@@ -38,11 +39,22 @@ class MainActivity : AppCompatActivity() {
             toggleMusic()
         }
 
+        // --- INSTRUCCIONES DEL JUEGO (HU 5.0) ---
         binding.toolbar.btnInstructions.setOnClickListener {
-            showRulesDialog()
+            val fragment = InstruccionesFragment()
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
-        // CALIFICAR APLICACIÓN
+        // --- CALIFICAR APLICACIÓN (HU 4.0) ---
         binding.toolbar.btnStar.setOnClickListener {
             rateApp()
         }
@@ -72,7 +84,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /*Calificar la aplicación.*/
+    /**
+     * Implementación de la HU 4.0: Calificar la aplicación.
+     */
     private fun rateApp() {
         val packageName = "com.nequi.MobileApp"
         try {

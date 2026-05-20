@@ -59,6 +59,11 @@ class MainActivity : AppCompatActivity() {
             rateApp()
         }
 
+        // --- COMPARTIR APLICACIÓN (HU 10.0) ---
+        binding.toolbar.btnShare.setOnClickListener {
+            shareApp()
+        }
+
         // --- CONEXIÓN BOTÓN "+" ---
         binding.toolbar.btnAddChallenge.setOnClickListener {
             val fragment = RetosFragment()
@@ -82,6 +87,21 @@ class MainActivity : AppCompatActivity() {
                 startCountdown()
             }
         }
+    }
+
+    /**
+     * Implementación de la HU 10.0: Compartir aplicación.
+     * Muestra el selector nativo de Android para compartir la app.
+     */
+    private fun shareApp() {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            val shareMessage = "App Pico Botella\n\n" +
+                    "Solo los valientes lo juegan !!\n\n" +
+                    "https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es"
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+        }
+        startActivity(Intent.createChooser(shareIntent, "Compartir usando:"))
     }
 
     /**

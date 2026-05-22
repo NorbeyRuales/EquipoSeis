@@ -34,7 +34,7 @@ public class AgregarRetoDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_reto, null);
+        View view = inflater.inflate(R.layout.dialog_reto_form, null);
 
         dbHelper = new RetosDatabaseHelper(getContext());
 

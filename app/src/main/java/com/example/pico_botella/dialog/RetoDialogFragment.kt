@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.example.pico_botella.database.RetosDatabaseHelper
+import com.example.pico_botella.database.AppDatabase
 import com.example.pico_botella.databinding.DialogRetoBinding
 import com.example.pico_botella.model.Reto
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import org.json.JSONObject
 import java.net.URL
 import kotlin.random.Random
@@ -20,7 +22,6 @@ class RetoDialogFragment : DialogFragment() {
 
     private var _binding: DialogRetoBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dbHelper: RetosDatabaseHelper
     private var onDismissListener: (() -> Unit)? = null
 
     fun setOnDismissListener(listener: () -> Unit) {
@@ -39,16 +40,13 @@ class RetoDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        // Ajustar el diálogo para que ocupe el ancho deseado y sea transparente de fondo
         dialog?.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         
-        isCancelable = false // No se cierra al tocar fuera
+        isCancelable = false
 
-        dbHelper = RetosDatabaseHelper(requireContext())
-        
         setupReto()
         fetchPokemonImage()
 
@@ -59,19 +57,25 @@ class RetoDialogFragment : DialogFragment() {
     }
 
     private fun setupReto() {
-        val retos = dbHelper.obtenerRetos()
-        if (retos.isNotEmpty()) {
-            val retoAleatorio = retos[Random.nextInt(retos.size)]
-            binding.tvRetoDescription.text = retoAleatorio.descripcion
-        } else {
-            binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
+        lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(requireContext(), lifecycleScope)
+            val retos = db.retoDao().getAllRetos().first()
+            
+            withContext(Dispatchers.Main) {
+                if (retos.isNotEmpty()) {
+                    val retoAleatorio = retos[Random.nextInt(retos.size)]
+                    binding.tvRetoDescription.text = retoAleatorio.descripcion
+                } else {
+                    binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
+                }
+            }
         }
     }
 
     private fun fetchPokemonImage() {
         binding.pbLoading.visibility = View.VISIBLE
         
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json").readText()
                 val jsonObject = JSONObject(response)
@@ -79,7 +83,6 @@ class RetoDialogFragment : DialogFragment() {
                 val randomPokemon = pokemonArray.getJSONObject(Random.nextInt(pokemonArray.length()))
                 var imageUrl = randomPokemon.getString("img")
                 
-                // Forzar HTTPS si es necesario para Glide
                 if (imageUrl.startsWith("http://")) {
                     imageUrl = imageUrl.replace("http://", "https://")
                 }
@@ -96,7 +99,6 @@ class RetoDialogFragment : DialogFragment() {
                 withContext(Dispatchers.Main) {
                     if (_binding != null) {
                         binding.pbLoading.visibility = View.GONE
-                        // Imagen de error o fallback
                         binding.ivPokemon.setImageResource(android.R.drawable.ic_dialog_alert)
                     }
                 }

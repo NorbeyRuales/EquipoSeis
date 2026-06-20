@@ -2,10 +2,12 @@ package com.example.pico_botella.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -23,6 +25,12 @@ class RetoDialogFragment : DialogFragment() {
         onDismissListener = listener
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,12 +42,8 @@ class RetoDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Ajustar el diálogo para que ocupe el ancho deseado y sea transparente de fondo
-        dialog?.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
+
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         
         isCancelable = false // No se cierra al tocar fuera
 
@@ -51,6 +55,15 @@ class RetoDialogFragment : DialogFragment() {
         binding.btnClose.setOnClickListener {
             dismiss()
             onDismissListener?.invoke()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val dialogWidth = (resources.displayMetrics.widthPixels * 0.92).toInt()
+        dialog?.window?.apply {
+            setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
     }
 

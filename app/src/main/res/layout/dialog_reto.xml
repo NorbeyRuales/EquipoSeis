@@ -1,75 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="24dp"
-    android:background="@drawable/bg_dialog_reto"
-    android:padding="20dp">
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="12dp"
+    android:paddingTop="56dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="38dp">
 
-    <ImageView
-        android:id="@+id/ivPokemon"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/retoCard"
+        android:layout_width="match_parent"
+        android:layout_height="218dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_dialog_reto"
+        android:paddingStart="26dp"
+        android:paddingTop="58dp"
+        android:paddingEnd="26dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:id="@+id/tvRetoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¡TU RETO!"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvRetoDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Realiza un RecyclerView que liste una api de Pokemones" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/pokemonContainer"
+        android:layout_width="116dp"
+        android:layout_height="116dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="-56dp"
+        android:background="@drawable/bg_pokemon_circle"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/ivPokemon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Pokemon aleatorio"
+            android:scaleType="fitCenter"
+            tools:src="@tools:sample/avatars" />
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <TextView
-        android:id="@+id/tvRetoTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="¡TU RETO!"
-        android:textColor="@color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPokemon" />
-
-    <TextView
-        android:id="@+id/tvRetoDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRetoTitle"
-        tools:text="Baila sin música durante 30 segundos" />
-
-    <Button
         android:id="@+id/btnClose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/orange"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/bg_reto_close_button"
+        android:gravity="center"
+        android:translationY="12dp"
         android:text="Cerrar"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRetoDescription" />
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <ProgressBar
-        android:id="@+id/pbLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/ivPokemon"
-        app:layout_constraintEnd_toEndOf="@+id/ivPokemon"
-        app:layout_constraintStart_toStartOf="@+id/ivPokemon"
-        app:layout_constraintTop_toTopOf="@+id/ivPokemon" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

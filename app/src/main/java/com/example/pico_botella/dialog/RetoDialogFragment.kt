@@ -7,20 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.pico_botella.database.RetosDatabaseHelper
 import com.example.pico_botella.databinding.DialogRetoBinding
-import com.example.pico_botella.model.Reto
-import kotlinx.coroutines.*
-import org.json.JSONObject
-import java.net.URL
-import kotlin.random.Random
+import com.example.pico_botella.viewmodel.GameViewModel
 
 class RetoDialogFragment : DialogFragment() {
 
     private var _binding: DialogRetoBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dbHelper: RetosDatabaseHelper
+    private lateinit var viewModel: GameViewModel
     private var onDismissListener: (() -> Unit)? = null
 
     fun setOnDismissListener(listener: () -> Unit) {
@@ -47,10 +43,10 @@ class RetoDialogFragment : DialogFragment() {
         
         isCancelable = false // No se cierra al tocar fuera
 
-        dbHelper = RetosDatabaseHelper(requireContext())
-        
-        setupReto()
-        fetchPokemonImage()
+        viewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
+
+        observeChallenge()
+        viewModel.cargarRetoConPokemonAleatorio()
 
         binding.btnClose.setOnClickListener {
             dismiss()
@@ -58,45 +54,27 @@ class RetoDialogFragment : DialogFragment() {
         }
     }
 
-    private fun setupReto() {
-        val retos = dbHelper.obtenerRetos()
-        if (retos.isNotEmpty()) {
-            val retoAleatorio = retos[Random.nextInt(retos.size)]
-            binding.tvRetoDescription.text = retoAleatorio.descripcion
-        } else {
-            binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
-        }
-    }
-
-    private fun fetchPokemonImage() {
-        binding.pbLoading.visibility = View.VISIBLE
-        
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json").readText()
-                val jsonObject = JSONObject(response)
-                val pokemonArray = jsonObject.getJSONArray("pokemon")
-                val randomPokemon = pokemonArray.getJSONObject(Random.nextInt(pokemonArray.length()))
-                var imageUrl = randomPokemon.getString("img")
-                
-                // Forzar HTTPS si es necesario para Glide
-                if (imageUrl.startsWith("http://")) {
-                    imageUrl = imageUrl.replace("http://", "https://")
+    private fun observeChallenge() {
+        viewModel.challengeState.observe(viewLifecycleOwner) { state ->
+            when {
+                state.isLoading -> {
+                    binding.tvRetoDescription.text = "Cargando reto..."
+                    binding.pbLoading.visibility = View.VISIBLE
                 }
+                state.isEmpty -> {
+                    binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
+                    binding.pbLoading.visibility = View.GONE
+                    binding.ivPokemon.setImageResource(android.R.drawable.ic_dialog_alert)
+                }
+                state.reto != null -> {
+                    binding.tvRetoDescription.text = state.reto.descripcion
+                    binding.pbLoading.visibility = View.GONE
 
-                withContext(Dispatchers.Main) {
-                    if (_binding != null) {
+                    if (state.pokemonImageUrl != null) {
                         Glide.with(this@RetoDialogFragment)
-                            .load(imageUrl)
+                            .load(state.pokemonImageUrl)
                             .into(binding.ivPokemon)
-                        binding.pbLoading.visibility = View.GONE
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    if (_binding != null) {
-                        binding.pbLoading.visibility = View.GONE
-                        // Imagen de error o fallback
+                    } else {
                         binding.ivPokemon.setImageResource(android.R.drawable.ic_dialog_alert)
                     }
                 }

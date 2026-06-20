@@ -16,17 +16,18 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import com.example.pico_botella.R;
-import com.example.pico_botella.database.RetosDatabaseHelper;
-import com.example.pico_botella.fragments.RetosFragment;
 import com.example.pico_botella.model.Reto;
 
 public class AgregarRetoDialog extends DialogFragment {
 
-    private RetosFragment parentFragment;
-    private RetosDatabaseHelper dbHelper;
+    private final OnRetoSaveListener listener;
 
-    public AgregarRetoDialog(RetosFragment fragment) {
-        this.parentFragment = fragment;
+    public interface OnRetoSaveListener {
+        void onSave(Reto reto);
+    }
+
+    public AgregarRetoDialog(OnRetoSaveListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -35,8 +36,6 @@ public class AgregarRetoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_reto_form, null);
-
-        dbHelper = new RetosDatabaseHelper(getContext());
 
         EditText etDescripcion = view.findViewById(R.id.etDescripcion);
         Button btnCancel = view.findViewById(R.id.btnCancel);
@@ -72,11 +71,7 @@ public class AgregarRetoDialog extends DialogFragment {
         btnSave.setOnClickListener(v -> {
             String desc = etDescripcion.getText().toString().trim();
             if (!desc.isEmpty()) {
-                // Criterio 6: Guardar en SQLite y listar inmediatamente
-                dbHelper.agregarReto(new Reto(desc));
-                if (parentFragment != null) {
-                    parentFragment.actualizarLista();
-                }
+                listener.onSave(new Reto(desc));
                 dismiss();
             }
         });

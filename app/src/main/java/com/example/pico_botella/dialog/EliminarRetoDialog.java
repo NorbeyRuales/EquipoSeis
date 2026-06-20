@@ -11,19 +11,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.example.pico_botella.R;
-import com.example.pico_botella.database.RetosDatabaseHelper;
-import com.example.pico_botella.fragments.RetosFragment;
 import com.example.pico_botella.model.Reto;
 
 public class EliminarRetoDialog extends DialogFragment {
 
-    private Reto reto;
-    private RetosFragment parentFragment;
-    private RetosDatabaseHelper dbHelper;
+    private final Reto reto;
+    private final OnRetoDeleteListener listener;
 
-    public EliminarRetoDialog(Reto reto, RetosFragment fragment) {
+    public interface OnRetoDeleteListener {
+        void onDelete(Reto reto);
+    }
+
+    public EliminarRetoDialog(Reto reto, OnRetoDeleteListener listener) {
         this.reto = reto;
-        this.parentFragment = fragment;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,8 +33,6 @@ public class EliminarRetoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_eliminar, null);
-
-        dbHelper = new RetosDatabaseHelper(getContext());
 
         TextView tvDescripcion = view.findViewById(R.id.tvDescripcionReto);
         Button btnNo = view.findViewById(R.id.btnNo);
@@ -53,10 +52,7 @@ public class EliminarRetoDialog extends DialogFragment {
         // Criterio 5: Botón "SI" elimina de SQLite y actualiza lista
         btnSi.setOnClickListener(v -> {
             if (reto != null) {
-                dbHelper.eliminarReto(reto.getId());
-                if (parentFragment != null) {
-                    parentFragment.actualizarLista();
-                }
+                listener.onDelete(reto);
             }
             dismiss();
         });

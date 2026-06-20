@@ -16,19 +16,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import com.example.pico_botella.R;
-import com.example.pico_botella.database.RetosDatabaseHelper;
-import com.example.pico_botella.fragments.RetosFragment;
 import com.example.pico_botella.model.Reto;
 
 public class EditarRetoDialog extends DialogFragment {
 
-    private Reto reto;
-    private RetosFragment parentFragment;
-    private RetosDatabaseHelper dbHelper;
+    private final Reto reto;
+    private final OnRetoSaveListener listener;
 
-    public EditarRetoDialog(Reto reto, RetosFragment fragment) {
+    public interface OnRetoSaveListener {
+        void onSave(Reto reto);
+    }
+
+    public EditarRetoDialog(Reto reto, OnRetoSaveListener listener) {
         this.reto = reto;
-        this.parentFragment = fragment;
+        this.listener = listener;
     }
 
     @NonNull
@@ -37,8 +38,6 @@ public class EditarRetoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_reto_form, null);
-
-        dbHelper = new RetosDatabaseHelper(getContext());
 
         TextView tvTitle = view.findViewById(R.id.tvDialogTitle);
         EditText etDescripcion = view.findViewById(R.id.etDescripcion);
@@ -81,12 +80,8 @@ public class EditarRetoDialog extends DialogFragment {
         btnSave.setOnClickListener(v -> {
             String desc = etDescripcion.getText().toString().trim();
             if (!desc.isEmpty()) {
-                // Criterio 6: Guardar cambios y actualizar lista
                 reto.setDescripcion(desc);
-                dbHelper.actualizarReto(reto);
-                if (parentFragment != null) {
-                    parentFragment.actualizarLista();
-                }
+                listener.onSave(reto);
                 dismiss();
             }
         });

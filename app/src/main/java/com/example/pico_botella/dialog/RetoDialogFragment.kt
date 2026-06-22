@@ -1,31 +1,34 @@
 package com.example.pico_botella.dialog
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
-import com.example.pico_botella.database.AppDatabase
 import com.example.pico_botella.databinding.DialogRetoBinding
-import com.example.pico_botella.model.Reto
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.first
-import org.json.JSONObject
-import java.net.URL
-import kotlin.random.Random
+import com.example.pico_botella.viewmodel.GameViewModel
 
 class RetoDialogFragment : DialogFragment() {
 
     private var _binding: DialogRetoBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: GameViewModel by activityViewModels()
     private var onDismissListener: (() -> Unit)? = null
 
     fun setOnDismissListener(listener: () -> Unit) {
         onDismissListener = listener
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+        }
     }
 
     override fun onCreateView(
@@ -39,16 +42,12 @@ class RetoDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        dialog?.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-        
+
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isCancelable = false
 
-        setupReto()
-        fetchPokemonImage()
+        observeChallenge()
+        viewModel.cargarRetoConPokemonAleatorio()
 
         binding.btnClose.setOnClickListener {
             dismiss()
@@ -56,49 +55,36 @@ class RetoDialogFragment : DialogFragment() {
         }
     }
 
-    private fun setupReto() {
-        lifecycleScope.launch {
-            val db = AppDatabase.getDatabase(requireContext(), lifecycleScope)
-            val retos = db.retoDao().getAllRetos().first()
-            
-            withContext(Dispatchers.Main) {
-                if (retos.isNotEmpty()) {
-                    val retoAleatorio = retos[Random.nextInt(retos.size)]
-                    binding.tvRetoDescription.text = retoAleatorio.descripcion
-                } else {
-                    binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
-                }
-            }
+    override fun onStart() {
+        super.onStart()
+        val dialogWidth = (resources.displayMetrics.widthPixels * 0.92).toInt()
+        dialog?.window?.apply {
+            setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
     }
 
-    private fun fetchPokemonImage() {
-        binding.pbLoading.visibility = View.VISIBLE
-        
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val response = URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json").readText()
-                val jsonObject = JSONObject(response)
-                val pokemonArray = jsonObject.getJSONArray("pokemon")
-                val randomPokemon = pokemonArray.getJSONObject(Random.nextInt(pokemonArray.length()))
-                var imageUrl = randomPokemon.getString("img")
-                
-                if (imageUrl.startsWith("http://")) {
-                    imageUrl = imageUrl.replace("http://", "https://")
+    private fun observeChallenge() {
+        viewModel.challengeState.observe(viewLifecycleOwner) { state ->
+            when {
+                state.isLoading -> {
+                    binding.tvRetoDescription.text = "Cargando reto..."
+                    binding.pbLoading.visibility = View.VISIBLE
                 }
+                state.isEmpty -> {
+                    binding.tvRetoDescription.text = "¡No hay retos guardados! Agrega algunos en el menú +."
+                    binding.pbLoading.visibility = View.GONE
+                    binding.ivPokemon.setImageResource(android.R.drawable.ic_dialog_alert)
+                }
+                state.reto != null -> {
+                    binding.tvRetoDescription.text = state.reto.descripcion
+                    binding.pbLoading.visibility = View.GONE
 
-                withContext(Dispatchers.Main) {
-                    if (_binding != null) {
-                        Glide.with(this@RetoDialogFragment)
-                            .load(imageUrl)
+                    if (state.pokemonImageUrl != null) {
+                        Glide.with(this)
+                            .load(state.pokemonImageUrl)
                             .into(binding.ivPokemon)
-                        binding.pbLoading.visibility = View.GONE
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    if (_binding != null) {
-                        binding.pbLoading.visibility = View.GONE
+                    } else {
                         binding.ivPokemon.setImageResource(android.R.drawable.ic_dialog_alert)
                     }
                 }

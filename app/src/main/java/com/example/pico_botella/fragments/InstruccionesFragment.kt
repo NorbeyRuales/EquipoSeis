@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import com.example.pico_botella.MainActivity
 import com.example.pico_botella.R
 import com.example.pico_botella.databinding.FragmentInstruccionesBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class InstruccionesFragment : Fragment() {
 
     private var _binding: FragmentInstruccionesBinding? = null
@@ -38,14 +40,13 @@ class InstruccionesFragment : Fragment() {
             restoreAudioAndGoBack()
         }
 
-        // Criterio 8: Animación de triunfo (usando la animación heartbeat como ejemplo o simple fade in)
+        // Criterio 8: Animación de triunfo
         val pulseAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.heartbeat)
         binding.ivTriumph.startAnimation(pulseAnim)
     }
 
     private fun restoreAudioAndGoBack() {
         (activity as? MainActivity)?.let { mainActivity ->
-            // Si el estado global de música era 'true', se restablece
             if (mainActivity.isPlaying) {
                 mainActivity.mediaPlayer.start()
             }

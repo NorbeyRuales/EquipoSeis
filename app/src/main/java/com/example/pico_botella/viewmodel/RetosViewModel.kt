@@ -1,33 +1,28 @@
 package com.example.pico_botella.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.*
-import com.example.pico_botella.database.AppDatabase
 import com.example.pico_botella.model.Reto
 import com.example.pico_botella.repository.RetoRepository
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RetosViewModel(application: Application) : AndroidViewModel(application) {
-
+@HiltViewModel
+class RetosViewModel @Inject constructor(
     private val repository: RetoRepository
-    val allRetos: LiveData<List<Reto>>
+) : ViewModel() {
 
-    init {
-        val retoDao = AppDatabase.getDatabase(application, viewModelScope).retoDao()
-        repository = RetoRepository(retoDao)
-        allRetos = repository.allRetos.asLiveData()
-    }
+    val allRetos: LiveData<List<Reto>> = repository.getAllRetos().asLiveData()
 
-    fun insert(reto: Reto) = viewModelScope.launch(Dispatchers.IO) {
+    fun insert(reto: Reto) = viewModelScope.launch {
         repository.insert(reto)
     }
 
-    fun update(reto: Reto) = viewModelScope.launch(Dispatchers.IO) {
+    fun update(reto: Reto) = viewModelScope.launch {
         repository.update(reto)
     }
 
-    fun delete(reto: Reto) = viewModelScope.launch(Dispatchers.IO) {
+    fun delete(reto: Reto) = viewModelScope.launch {
         repository.delete(reto)
     }
 }

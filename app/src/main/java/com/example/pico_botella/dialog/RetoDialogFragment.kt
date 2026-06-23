@@ -13,7 +13,9 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.pico_botella.databinding.DialogRetoBinding
 import com.example.pico_botella.viewmodel.GameViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RetoDialogFragment : DialogFragment() {
 
     private var _binding: DialogRetoBinding? = null

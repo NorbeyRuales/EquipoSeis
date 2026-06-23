@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -13,11 +12,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.example.pico_botella.R
-import com.example.pico_botella.fragments.RetosFragment
 import com.example.pico_botella.model.Reto
+import com.example.pico_botella.viewmodel.RetosViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class EditarRetoDialog(private val reto: Reto, private val parentFragment: RetosFragment) : DialogFragment() {
+@AndroidEntryPoint
+class EditarRetoDialog(private val reto: Reto) : DialogFragment() {
+
+    private val viewModel: RetosViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
@@ -57,7 +63,7 @@ class EditarRetoDialog(private val reto: Reto, private val parentFragment: Retos
             val desc = etDescripcion.text.toString().trim()
             if (desc.isNotEmpty()) {
                 reto.descripcion = desc
-                parentFragment.viewModel.update(reto)
+                viewModel.update(reto)
                 dismiss()
             }
         }

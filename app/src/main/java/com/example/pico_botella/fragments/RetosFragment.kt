@@ -16,13 +16,14 @@ import com.example.pico_botella.dialog.EditarRetoDialog
 import com.example.pico_botella.dialog.EliminarRetoDialog
 import com.example.pico_botella.model.Reto
 import com.example.pico_botella.viewmodel.RetosViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RetosFragment : Fragment(), RetosAdapter.OnRetoClickListener {
 
     private var _binding: FragmentRetosBinding? = null
     private val binding get() = _binding!!
     
-    // Al usar by viewModels(), Kotlin genera automáticamente un getViewModel() interno
     val viewModel: RetosViewModel by viewModels()
     private lateinit var adapter: RetosAdapter
 
@@ -41,7 +42,7 @@ class RetosFragment : Fragment(), RetosAdapter.OnRetoClickListener {
         setupToolbar()
 
         binding.fabAdd.setOnClickListener {
-            val dialog = AgregarRetoDialog(this)
+            val dialog = AgregarRetoDialog()
             dialog.show(parentFragmentManager, "AgregarRetoDialog")
         }
 
@@ -49,7 +50,6 @@ class RetosFragment : Fragment(), RetosAdapter.OnRetoClickListener {
             adapter.setRetos(retos)
         }
 
-        // Criterio 1: Pausar audio al entrar
         (activity as? MainActivity)?.let {
             if (it.mediaPlayer.isPlaying) {
                 it.mediaPlayer.pause()
@@ -59,7 +59,6 @@ class RetosFragment : Fragment(), RetosAdapter.OnRetoClickListener {
 
     private fun setupToolbar() {
         binding.toolbarRetos.setNavigationOnClickListener {
-            // Criterio 3: Restablecer audio al salir
             (activity as? MainActivity)?.let {
                 if (it.isPlaying) {
                     it.mediaPlayer.start()
@@ -78,12 +77,12 @@ class RetosFragment : Fragment(), RetosAdapter.OnRetoClickListener {
     }
 
     override fun onEditClick(reto: Reto) {
-        val dialog = EditarRetoDialog(reto, this)
+        val dialog = EditarRetoDialog(reto)
         dialog.show(parentFragmentManager, "EditarRetoDialog")
     }
 
     override fun onDeleteClick(reto: Reto) {
-        val dialog = EliminarRetoDialog(reto, this)
+        val dialog = EliminarRetoDialog(reto)
         dialog.show(parentFragmentManager, "EliminarRetoDialog")
     }
 

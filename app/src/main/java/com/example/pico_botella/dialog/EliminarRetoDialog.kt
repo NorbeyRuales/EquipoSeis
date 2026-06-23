@@ -6,11 +6,18 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.example.pico_botella.R
-import com.example.pico_botella.fragments.RetosFragment
 import com.example.pico_botella.model.Reto
+import com.example.pico_botella.viewmodel.RetosViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class EliminarRetoDialog(private val reto: Reto, private val parentFragment: RetosFragment) : DialogFragment() {
+@AndroidEntryPoint
+class EliminarRetoDialog(private val reto: Reto) : DialogFragment() {
+
+    private val viewModel: RetosViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
@@ -28,7 +35,7 @@ class EliminarRetoDialog(private val reto: Reto, private val parentFragment: Ret
         btnNo.setOnClickListener { dismiss() }
 
         btnSi.setOnClickListener {
-            parentFragment.viewModel.delete(reto)
+            viewModel.delete(reto)
             dismiss()
         }
 

@@ -1,1 +1,1 @@
-// Borrado para evitar conflictos con la implementación de Room (AppDatabase)
+// Deleted to avoid Room conflicts during migration to Firestore

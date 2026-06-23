@@ -1,11 +1,10 @@
 package com.example.pico_botella.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.IgnoreExtraProperties
 
-@Entity(tableName = "retos")
+@IgnoreExtraProperties
 data class Reto(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    var descripcion: String
+    @get:Exclude var id: String = "",
+    var descripcion: String = ""
 )

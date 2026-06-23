@@ -4,4 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.navigation.safeargs) apply false
+    id("com.google.gms.google-services") version "4.5.0" apply false
+    alias(libs.plugins.hilt.android) apply false
 }

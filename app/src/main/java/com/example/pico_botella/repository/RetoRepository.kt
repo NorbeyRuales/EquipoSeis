@@ -2,6 +2,7 @@ package com.example.pico_botella.repository
 
 import com.example.pico_botella.model.Reto
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -16,7 +17,10 @@ class RetoRepository @Inject constructor(
     private val retosCollection = firestore.collection("retos")
 
     fun getAllRetos(): Flow<List<Reto>> = callbackFlow {
-        val subscription = retosCollection.addSnapshotListener { snapshot, error ->
+        // Criterio 6: Ordenar por fecha de creación descendente para que los nuevos salgan arriba
+        val query = retosCollection.orderBy("createdAt", Query.Direction.DESCENDING)
+        
+        val subscription = query.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 close(error)
                 return@addSnapshotListener
@@ -32,6 +36,8 @@ class RetoRepository @Inject constructor(
     }
 
     suspend fun insert(reto: Reto) {
+        // Al insertar no enviamos el campo createdAt, Firestore lo pone automáticamente 
+        // gracias a la anotación @ServerTimestamp en el modelo
         retosCollection.add(reto).await()
     }
 

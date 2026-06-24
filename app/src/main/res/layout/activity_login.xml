@@ -116,7 +116,7 @@
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="405dp"
         android:enabled="false"
         android:text="Registrarse"
         android:textColor="#9EA1A1"

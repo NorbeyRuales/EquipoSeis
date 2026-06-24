@@ -72,6 +72,8 @@ class LoginActivity : AppCompatActivity() {
 
         val isEnabled = email.isNotEmpty() && password.length >= 6
         binding.btnLogin.isEnabled = isEnabled
+        binding.tvRegister.isEnabled = isEnabled
+        binding.tvRegister.isClickable = isEnabled
 
         // Criterio 8: Cambio de estilo dinámico al habilitar
         if (isEnabled) {

@@ -39,6 +39,10 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             login()
         }
+
+        binding.tvRegister.setOnClickListener {
+            register()
+        }
     }
 
     private fun login() {
@@ -55,6 +59,21 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Login incorrecto", Toast.LENGTH_SHORT).show()
                     validateFields()
                 }
+            }
+    }
+
+    private fun register() {
+        val email = binding.etEmail.text.toString().trim()
+        val password = binding.etPassword.text.toString().trim()
+
+        binding.tvRegister.isEnabled = false
+        binding.tvRegister.isClickable = false
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (!task.isSuccessful) {
+                    Toast.makeText(this, "Error en el registro", Toast.LENGTH_SHORT).show()
+                }
+                validateFields()
             }
     }
 

@@ -24,6 +24,14 @@ class LoginActivity : AppCompatActivity() {
         setupListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // Criterio 1: Si el usuario ya está autenticado, saltar directamente a la pantalla principal
+        if (auth.currentUser != null) {
+            startMainActivity()
+        }
+    }
+
     private fun setupListeners() {
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -53,8 +61,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    startMainActivity()
                 } else {
                     Toast.makeText(this, "Login incorrecto", Toast.LENGTH_SHORT).show()
                     validateFields()
@@ -70,11 +77,19 @@ class LoginActivity : AppCompatActivity() {
         binding.tvRegister.isClickable = false
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
-                if (!task.isSuccessful) {
+                if (task.isSuccessful) {
+                    // Criterio 1: Al registrarse también se debe iniciar sesión y entrar a la app
+                    startMainActivity()
+                } else {
                     Toast.makeText(this, "Error en el registro", Toast.LENGTH_SHORT).show()
+                    validateFields()
                 }
-                validateFields()
             }
+    }
+
+    private fun startMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun validateFields() {
@@ -94,7 +109,6 @@ class LoginActivity : AppCompatActivity() {
         binding.tvRegister.isEnabled = isEnabled
         binding.tvRegister.isClickable = isEnabled
 
-        // Criterio 8: Cambio de estilo dinámico al habilitar
         if (isEnabled) {
             binding.btnLogin.setTextColor(Color.WHITE)
             binding.btnLogin.setTypeface(null, Typeface.BOLD)

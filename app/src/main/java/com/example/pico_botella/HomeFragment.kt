@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pico_botella.databinding.FragmentHomeBinding
 import com.example.pico_botella.dialog.RetoDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.random.Random
 
@@ -64,6 +65,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_retosFragment)
         }
 
+        binding.toolbar.btnLogout.setOnClickListener {
+            logout()
+        }
+
         startHeartbeatAnimation()
 
         binding.btnStartGame.setOnClickListener {
@@ -74,6 +79,14 @@ class HomeFragment : Fragment() {
         }
         
         updateAudioIcon()
+    }
+
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        activity?.finish()
     }
 
     private fun updateAudioIcon() {

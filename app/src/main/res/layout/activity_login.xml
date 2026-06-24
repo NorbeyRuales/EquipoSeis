@@ -7,7 +7,7 @@
     android:background="#000000">
 
     <!-- Ondas al fondo -->
-    <開ImageView
+    <ImageView
         android:id="@+id/ivWaves"
         android:layout_width="0dp"
         android:layout_height="150dp"

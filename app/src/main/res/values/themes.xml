@@ -1,8 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.PICO_BOTELLA" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Color del borde cuando está enfocado (seleccionado) -->
+        <item name="colorPrimary">@color/white</item>
+        <!-- Color del borde cuando NO está enfocado (reposo) -->
+        <item name="colorOutline">@color/gray_line</item>
+        <!-- Color del texto de la sugerencia (hint) cuando no está enfocado -->
+        <item name="colorOnSurfaceVariant">@color/white</item>
     </style>
 
     <style name="Theme.PICO_BOTELLA" parent="Base.Theme.PICO_BOTELLA" />

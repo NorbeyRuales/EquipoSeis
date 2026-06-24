@@ -7,7 +7,7 @@
     android:background="#000000">
 
     <!-- Ondas al fondo -->
-    <ImageView
+    <開ImageView
         android:id="@+id/ivWaves"
         android:layout_width="0dp"
         android:layout_height="150dp"
@@ -39,7 +39,6 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         app:boxBackgroundMode="outline"
-        app:boxStrokeColor="#FFFFFFFF"
         app:boxStrokeWidthFocused="2dp"
         app:hintTextColor="#FFFFFF"
         android:layout_marginStart="24dp"
@@ -71,7 +70,6 @@
         app:endIconTint="#FFFFFF"
         app:errorEnabled="true"
         app:boxBackgroundMode="outline"
-        app:boxStrokeColor="#FFFFFFFF"
         app:boxStrokeWidthFocused="2dp"
         app:hintTextColor="#FFFFFF"
         android:layout_marginStart="24dp"

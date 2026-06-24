@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.pico_botella.R
 import com.example.pico_botella.model.Reto
 import com.example.pico_botella.viewmodel.RetosViewModel
@@ -15,9 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EliminarRetoDialog(private val reto: Reto) : DialogFragment() {
 
-    private val viewModel: RetosViewModel by viewModels(
-        ownerProducer = { requireParentFragment() }
-    )
+    private val viewModel: RetosViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())

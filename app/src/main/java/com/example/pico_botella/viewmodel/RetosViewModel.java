@@ -1,1 +1,2 @@
-// Borrado para evitar duplicados con RetosViewModel.kt
+package com.example.pico_botella.viewmodel;
+// Duplicate of RetosViewModel.kt - Removed

@@ -14,6 +14,13 @@ class RetosViewModel @Inject constructor(
 
     val allRetos: LiveData<List<Reto>> = repository.getAllRetos().asLiveData()
 
+    private val _selectedReto = MutableLiveData<Reto?>()
+    val selectedReto: LiveData<Reto?> get() = _selectedReto
+
+    fun selectReto(reto: Reto?) {
+        _selectedReto.value = reto
+    }
+
     fun insert(reto: Reto) = viewModelScope.launch {
         repository.insert(reto)
     }

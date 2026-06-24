@@ -79,9 +79,13 @@ class LoginActivity : AppCompatActivity() {
         if (isEnabled) {
             binding.btnLogin.setTextColor(Color.WHITE)
             binding.btnLogin.setTypeface(null, Typeface.BOLD)
+            binding.tvRegister.setTextColor(Color.WHITE)
+            binding.tvRegister.setTypeface(null, Typeface.BOLD)
         } else {
             binding.btnLogin.setTextColor(Color.parseColor("#88FFFFFF"))
             binding.btnLogin.setTypeface(null, Typeface.NORMAL)
+            binding.tvRegister.setTextColor(Color.parseColor("#9EA1A1"))
+            binding.tvRegister.setTypeface(null, Typeface.NORMAL)
         }
     }
 }
